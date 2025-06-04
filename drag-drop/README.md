@@ -1,12 +1,64 @@
-# React + Vite
+# 📁 React File Manager
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A simple React-based File Manager UI that lets you:
+- Create folders
+- Upload files (via file input or drag & drop)
+- Move files into folders using a dropdown or drag-and-drop
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🛠 Features
 
-## Expanding the ESLint configuration
+✅ Create folders with custom names  
+✅ Upload files via drag-and-drop or file picker  
+✅ View file name, type, and size  
+✅ Move files to folders using:
+- Dropdown select
+- Drag & drop onto folder blocks  
+✅ Folder hover highlights during drag  
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+---
+
+## 🚀 Tech Stack
+
+- React
+- Vite
+- Tailwind CSS
+
+---
+
+## 🧱 Folder Structure
+
+src/
+├── App.jsx
+├── index.js
+└── components/
+├── CreateFolder.jsx
+├── FolderList.jsx
+├── FileUploader.jsx
+└── FileList.jsx
+
+
+---
+
+## ⚙️ Setup Instructions
+
+### 1. Clone this repository
+   ```bash
+   git clone https://github.com/your-username/react-file-manager.git
+   cd react-file-manager
+```
+### 2. Install Dependencies
+
+```bash
+npm install
+```
+### 3. Run the Project
+
+```bash
+npm run dev
+```
+### 4.Screenshots
+
+<img width="1507" alt="image" src="https://github.com/user-attachments/assets/4ca157f4-dbfc-4fef-a953-8d11cede7d2a" />
+
