@@ -1,12 +1,62 @@
-# React + Vite
+# 📁 React File Manager - Create Folder Feature
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This project is a basic file manager UI built with React and Tailwind CSS, focusing on the ability to create and display folders.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 Features
 
-## Expanding the ESLint configuration
+- 🗂️ Create a new folder using an input field
+- 📋 Display folders in a list or grid view
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+---
+
+## 🛠️ Tech Stack
+
+- React
+- Vite
+- Tailwind CSS
+
+---
+## Folder Structure
+
+src/
+├── components/
+│   ├── CreateFolder.jsx    # Input + Add button
+│   └── FolderList.jsx      # Display folders
+├── App.jsx
+└── main.jsx
+
+---
+
+
+### 1.Installation
+
+```bash
+# Clone the repository
+git clone https://github.com/your-username/react-file-manager.git
+
+cd react-file-manager
+```
+
+### 2.Install dependencies
+
+```bash
+npm install
+```
+### 3.Running the project
+
+```bash
+npm run dev
+```
+
+### 4.Screenshots
+
+<img width="1223" alt="image" src="https://github.com/user-attachments/assets/73718f10-6f83-489d-8063-b9b525378aef" />
+
+<img width="1236" alt="image" src="https://github.com/user-attachments/assets/f00129a2-c395-4f2d-87ae-da9f50a74152" />
+
+
+
+
+
