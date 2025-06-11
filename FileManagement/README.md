@@ -80,6 +80,11 @@ npm run dev
 
 <img width="1503" alt="image" src="https://github.com/user-attachments/assets/595776ee-c8a3-4130-bd4d-f37818dfae69" />
 
+### Enabled multiple file uploads
+
+<img width="1499" alt="image" src="https://github.com/user-attachments/assets/8a8f0850-2644-46a3-8328-5e43f4e1e81e" />
+
+
 
 
 
