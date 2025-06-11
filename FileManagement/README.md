@@ -64,7 +64,7 @@ npm run dev
 
 <img width="1507" alt="image" src="https://github.com/user-attachments/assets/0dc241cf-6f27-4bb8-ba14-68a4daea0b14" />
 
-###Added new folder in the main area
+### Added new folder in the main area
 
 <img width="1511" alt="image" src="https://github.com/user-attachments/assets/f76f18d1-9ddf-41b8-aede-62a85fe0f475" />
 
