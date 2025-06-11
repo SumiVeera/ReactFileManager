@@ -1,57 +1,88 @@
 # 📁 React File Manager
 
-A simple file manager UI built with **React**, **Vite**, and **Tailwind CSS**.  
-It allows you to create folders, upload files, and move files into folders through an intuitive interface.
+A basic File Manager UI built with **React** and **Tailwind CSS**, similar to Google Drive. This app allows you to:
+
+- ✅ Create folders
+- 📝 Rename and delete folders (with file existence confirmation)
+- 📂 Upload files to the root or specific folders
+- 🔄 Drag & drop files into folders
+- 🧭 Navigate into folders to view their contents
 
 ---
 
-## ✨ Features
+## 🚀 Features
 
-- ✅ Create folders dynamically
-- 📂 Upload files via drag-and-drop or file input
-- 📝 Display file name, type, and size
-- 🔀 Move uploaded files into selected folders using a dropdown menu
+- 📁 Create and display folders
+- 🗃️ Upload files (to root or folder)
+- ✏️ Rename folders
+- 🗑️ Delete folders (with file confirmation)
+- 📤 Upload files via input
+- 📦 Drag and drop files into folders
+- 📜 View files inside folders
+
+---
+
+## 🛠️ Tech Stack
+
+- ⚛️ React
+- 💨 Tailwind CSS
+- 🔀 UUID for unique folder IDs
 
 ---
 
-## 📦 Tech Stack
-
-- ⚛️ React (via Vite)
-- 🎨 Tailwind CSS
-- 🔧 JavaScript (ES6+)
-
----
-## Project Structure
+## Folder Structure
 
 src/
-├── App.jsx
 ├── components/
-│   ├── CreateFolder.jsx
-│   ├── FolderList.jsx
-│   ├── FileUploader.jsx
-│   └── FileList.jsx
-└── index.css
+│   └── FolderList.jsx      # Reusable folder list view
+├── App.jsx                 # Main app logic
+└── main.jsx                # Entry point
+
 ---
 
-## 🚀 Getting Started
+## 📦 Installation
 
-### 1. Clone the Repository
+### 1. Clone the repository
 
 ```bash
 git clone https://github.com/your-username/react-file-manager.git
 cd react-file-manager
 ```
-
 ### 2.Install Dependencies
 
 ```bash
 npm install
 ```
-### Run the project
 
+###3.Run the Project
 ```bash
 npm run dev
 ```
 ### 4.Screenshots
 
-<img width="1507" alt="image" src="https://github.com/user-attachments/assets/91970124-aadd-413e-b8d3-09efb7ad10a8" />
+### Main Project
+
+<img width="1507" alt="image" src="https://github.com/user-attachments/assets/0dc241cf-6f27-4bb8-ba14-68a4daea0b14" />
+
+###Added new folder in the main area
+
+<img width="1511" alt="image" src="https://github.com/user-attachments/assets/f76f18d1-9ddf-41b8-aede-62a85fe0f475" />
+
+### Inside a folder created new file
+
+<img width="1502" alt="image" src="https://github.com/user-attachments/assets/217ec04e-0c34-4c99-b58f-24cb7b6834ef" />
+
+### Uploaded a new file in the Main area
+
+<img width="1502" alt="image" src="https://github.com/user-attachments/assets/d45089f1-2e3e-476e-b1c4-9d9db9529612" />
+
+### Dragged the file and dropped into the folder
+
+<img width="1503" alt="image" src="https://github.com/user-attachments/assets/595776ee-c8a3-4130-bd4d-f37818dfae69" />
+
+
+
+
+
+
+
