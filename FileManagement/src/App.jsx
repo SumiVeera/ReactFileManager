@@ -99,17 +99,20 @@ function App() {
           multiple
           className="hidden"
           onChange={(e) => {
+            console.log("Selected files:", e.target.files);
             const uploaded = Array.from(e.target.files).map(file => ({
               name: file.name,
               type: file.type,
               size: (file.size / 1024).toFixed(2) + ' KB',
             }));
+            console.log("Processed files:", uploaded);
             setRootFiles(prev => [...prev, ...uploaded]);
-          }}
-        />
+          }} />
 
         <button
-          onClick={() => document.getElementById('root-upload').click()}
+          onClick={() => {
+            document.getElementById('root-upload').click(); // This is now safe
+          }}
           className="w-full mb-4 px-3 py-1 text-sm bg-green-500 text-white rounded hover:bg-green-600"
         >
           ⬆️ Upload
@@ -158,9 +161,9 @@ function App() {
                 </>
               ) : (
                 <div
-                  className="flex-1 flex justify-between items-center cursor-pointer hover:bg-gray-200 px-2 py-1 rounded"
-                  onClick={() => setActiveFolder(folder)}
-                >
+                className="flex-1 flex justify-between items-center cursor-pointer hover:bg-gray-200 px-2 py-1 rounded"
+                onClick={() => setActiveFolder(folder)}
+              >
                   <span>{folder.name}</span>
                   <div className="space-x-1 text-sm">
                     <button
@@ -284,3 +287,5 @@ function App() {
 }
 
 export default App;
+
+
