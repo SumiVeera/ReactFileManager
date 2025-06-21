@@ -7,6 +7,9 @@ const FolderList = ({
   handleDragOver,
   handleDragLeave,
   dragOverId,
+  onAddSubfolder,
+  handleFolderDrop,     
+  setDraggedFolder,
 }) => {
   return (
     <ul className="space-y-4 mt-4">
@@ -17,7 +20,17 @@ const FolderList = ({
             dragOverId === folder.id ? 'bg-blue-100' : 'hover:bg-gray-100'
           }`}
           onClick={() => onFolderClick(folder)}
-          onDrop={(e) => handleFileDrop(e, folder.id)}
+
+          draggable
+          onDragStart={(e) => {
+            e.stopPropagation();
+            setDraggedFolder(folder); 
+          }}
+          onDrop={(e) => {
+            e.stopPropagation();
+            handleFileDrop(e, folder.id);
+            handleFolderDrop(e, folder.id);
+          }}
           onDragOver={(e) => handleDragOver(e, folder.id)}
           onDragLeave={handleDragLeave}
         >

@@ -4,7 +4,13 @@ import FolderItem from './FolderItem';
 function Sidebar({
   folders, newFolderName, setNewFolderName, handleAddFolder,
   editingId, setEditingId, editedName, setEditedName,
-  handleRename, handleDelete, setActiveFolder, setRootFiles
+  handleRename, handleDelete, setActiveFolder, setRootFiles,
+  handleAddSubfolder, handleSetActiveFolder,handleFolderDrop,
+  handleFileDrop,
+  handleDragOver,
+  handleDragLeave,
+  dragOverId,
+  setDraggedFolder,
 }) {
   return (
     <div className="w-64 bg-gray-100 p-4 border-r">
@@ -59,6 +65,14 @@ function Sidebar({
             handleRename={handleRename}
             handleDelete={handleDelete}
             setActiveFolder={setActiveFolder}
+            handleAddSubfolder={handleAddSubfolder}
+            handleSetActiveFolder={handleSetActiveFolder}
+            handleFolderDrop={handleFolderDrop}
+            handleFileDrop={handleFileDrop}
+            handleDragOver={handleDragOver}
+            handleDragLeave={handleDragLeave}
+            dragOverId={dragOverId}
+            setDraggedFolder={setDraggedFolder}
           />
         ))}
       </ul>
