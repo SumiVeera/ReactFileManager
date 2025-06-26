@@ -16,10 +16,10 @@ A basic File Manager UI built with **React** and **Tailwind CSS**, similar to Go
 - 🗃️ Upload files (to root or folder)
 - ✏️ Rename folders
 - 🗑️ Delete folders (with file confirmation)
-- 📤 Upload files via input
-- 📦 Drag and drop files into folders
-- 📜 View files inside folders
-
+- 📁 Folder Hierarchy with Tree View
+- 🖱️ Full Drag & Drop Support
+- 💻 Upload Files from System
+- ⏳ Simulated Asynchronous Upload with Progress
 ---
 
 ## 🛠️ Tech Stack
@@ -32,12 +32,18 @@ A basic File Manager UI built with **React** and **Tailwind CSS**, similar to Go
 
 ## Folder Structure
 
+```bash
 src/
 ├── components/
-│   └── FolderList.jsx      # Reusable folder list view
-├── App.jsx                 # Main app logic
-└── main.jsx                # Entry point
-
+│   ├── FolderItem.jsx         # Renders folder with subfolders recursively
+│   ├── FolderList.jsx         # Displays root folders in right panel
+│   ├── MainContent.jsx        # Main file and folder area with drop targets
+│   └── Sidebar.jsx            # Tree view with expandable folders
+├── hooks/
+│   └── useFolderManager.js    # Handles all state and file/folder logic
+├── App.jsx
+└── index.js
+```
 ---
 
 ## 📦 Installation
@@ -83,6 +89,27 @@ npm run dev
 ### Enabled multiple file uploads
 
 <img width="1499" alt="image" src="https://github.com/user-attachments/assets/8a8f0850-2644-46a3-8328-5e43f4e1e81e" />
+
+### Folder Hierarchy with Tree View
+
+<img width="1460" alt="image" src="https://github.com/user-attachments/assets/ddccdcb5-928a-4a93-a387-bef524303d58" />
+<img width="1458" alt="image" src="https://github.com/user-attachments/assets/57a71d65-3ded-4183-8981-f0e31060daa2" />
+
+### Drag & Drop Support
+
+<img width="1462" alt="image" src="https://github.com/user-attachments/assets/bfccabfe-4620-4fcc-b43d-e9ec09f7b636" />
+<img width="1462" alt="image" src="https://github.com/user-attachments/assets/402f3593-73fd-4801-b4d4-d71260214eb7" />
+
+### Upload Files from System
+
+<img width="1460" alt="image" src="https://github.com/user-attachments/assets/17079800-1102-4b6f-9e65-b17cdc60eb8d" />
+
+
+
+
+
+
+
 
 
 
