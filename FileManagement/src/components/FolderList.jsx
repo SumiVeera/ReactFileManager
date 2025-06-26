@@ -7,40 +7,68 @@ const FolderList = ({
   handleDragOver,
   handleDragLeave,
   dragOverId,
-  onAddSubfolder,
-  handleFolderDrop,     
+  handleFolderDrop,
   setDraggedFolder,
+  setDraggedFile,
 }) => {
+
   return (
     <ul className="space-y-4 mt-4">
       {folders.map(folder => (
         <li
           key={folder.id}
-          className={`p-3 border rounded cursor-pointer ${
-            dragOverId === folder.id ? 'bg-blue-100' : 'hover:bg-gray-100'
-          }`}
+          className={`p-3 border rounded cursor-pointer 
+            ${dragOverId === folder.id ? 'bg-blue-100' : 'hover:bg-gray-100'
+            }`}
           onClick={() => onFolderClick(folder)}
 
           draggable
           onDragStart={(e) => {
             e.stopPropagation();
-            setDraggedFolder(folder); 
+            e.dataTransfer.setData('type', 'folder');
+            setDraggedFolder(folder);
           }}
           onDrop={(e) => {
+            e.preventDefault();
             e.stopPropagation();
-            handleFileDrop(e, folder.id);
-            handleFolderDrop(e, folder.id);
+
+            const systemFiles = e.dataTransfer.files;
+            const sourceFolderId = e.dataTransfer.getData('source-folder-id');
+            const draggedIndex = e.dataTransfer.getData('file-index');
+
+            if (systemFiles && systemFiles.length > 0) {
+              handleFileDrop(e, folder.id);
+            } else if (sourceFolderId || draggedIndex) {
+              handleFileDrop(e, folder.id);
+            } else {
+              handleFolderDrop(e, folder.id);
+            }
           }}
-          onDragOver={(e) => handleDragOver(e, folder.id)}
-          onDragLeave={handleDragLeave}
+          onDragOver={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            handleDragOver(e, folder.id);
+          }}
+          onDragLeave={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            handleDragLeave();
+          }}
+
         >
           <h2 className="text-lg font-semibold mb-1">📁 {folder.name}</h2>
           <ul className="text-sm ml-4">
-            {folder.files.length === 0 ? (
+            {Array.isArray(folder.files) && folder.files.length === 0 ? (
               <li className="text-gray-400">No files</li>
             ) : (
               folder.files.map((file, index) => (
-                <li key={index}>📄 {file.name} ({file.size})</li>
+                <li key={index}
+                  draggable
+                  onDragStart={(e) => {
+                    e.dataTransfer.setData('file-index', index);
+                    e.dataTransfer.setData('source-folder-id', folder.id);
+                    setDraggedFile(file);
+                  }}>📄 {file.name} ({file.size})</li>
               ))
             )}
           </ul>
@@ -51,11 +79,4 @@ const FolderList = ({
 };
 
 export default FolderList;
-
-
-
-
-
-
-
 

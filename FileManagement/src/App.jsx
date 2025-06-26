@@ -10,6 +10,7 @@ function App() {
     <div className="flex h-screen">
       <Sidebar {...folderManager} />
       <MainContent {...folderManager} />
+  
     </div>
   );
 }

@@ -6,11 +6,8 @@ function Sidebar({
   editingId, setEditingId, editedName, setEditedName,
   handleRename, handleDelete, setActiveFolder, setRootFiles,
   handleAddSubfolder, handleSetActiveFolder,handleFolderDrop,
-  handleFileDrop,
-  handleDragOver,
-  handleDragLeave,
-  dragOverId,
-  setDraggedFolder,
+  handleFileDrop,handleDragOver,handleDragLeave,dragOverId,
+  setDraggedFolder,setDraggedFile,
 }) {
   return (
     <div className="w-64 bg-gray-100 p-4 border-r">
@@ -54,7 +51,7 @@ function Sidebar({
       </div>
 
       <ul>
-        {folders.map(folder => (
+        {(folders || []).map(folder => (
           <FolderItem
             key={folder.id}
             folder={folder}
@@ -73,6 +70,7 @@ function Sidebar({
             handleDragLeave={handleDragLeave}
             dragOverId={dragOverId}
             setDraggedFolder={setDraggedFolder}
+            setDraggedFile={setDraggedFile}
           />
         ))}
       </ul>

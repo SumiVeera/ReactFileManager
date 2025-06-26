@@ -17,6 +17,7 @@ function FolderItem({
   handleDragLeave,
   dragOverId,
   setDraggedFolder,
+  setDraggedFile,
 }) {
   const [expanded, setExpanded] = useState(true);
   const [isAddingSub, setIsAddingSub] = useState(false);
@@ -30,11 +31,31 @@ function FolderItem({
   return (
     <li
       className={`mb-2 ${dragOverId === folder.id ? 'bg-blue-100' : ''}`}
-      onDrop={(e) => handleFolderDrop(e, folder.id)}
+      onDrop={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        const systemFiles = e.dataTransfer.files;
+        const sourceFolderId = e.dataTransfer.getData('source-folder-id');
+        const draggedIndex = e.dataTransfer.getData('file-index');
+
+        if (systemFiles && systemFiles.length > 0) {
+          // ✅ Dropped files from OS
+          handleFileDrop(e, folder.id);
+        } else if (sourceFolderId || draggedIndex) {
+          // ✅ Internal file move (already works)
+          handleFileDrop(e, folder.id);
+        } else {
+          // ✅ Folder move
+          handleFolderDrop(e, folder.id);
+        }
+
+      }}
       onDragOver={(e) => handleDragOver(e, folder.id)}
       onDragLeave={handleDragLeave}
       onDragStart={(e) => {
         e.stopPropagation();
+        e.dataTransfer.setData('type', 'folder');
         setDraggedFolder(folder);
       }}
       draggable
@@ -175,6 +196,7 @@ function FolderItem({
               handleDragLeave={handleDragLeave}
               dragOverId={dragOverId}
               setDraggedFolder={setDraggedFolder}
+              setDraggedFile={setDraggedFile}
             />
           ))}
         </ul>

@@ -8,14 +8,19 @@ export default function useFolderManager() {
     { id: '2', name: 'Sales', files: [], subfolders: [] },
     { id: '3', name: 'Marketing', files: [], subfolders: [] },
   ]);
+  
   const [newFolderName, setNewFolderName] = useState('');
   const [editingId, setEditingId] = useState(null);
   const [editedName, setEditedName] = useState('');
   const [activeFolder, setActiveFolder] = useState(null);
   const [rootFiles, setRootFiles] = useState([]);
+
   const [dragOverId, setDragOverId] = useState(null);
   const [folderStack, setFolderStack] = useState([]);
   const [draggedFolder, setDraggedFolder] = useState(null);
+  const [draggedFile, setDraggedFile] = useState(null);
+  const [uploadQueue, setUploadQueue] = useState([]);
+
 
   const handleAddFolder = () => {
     const name = newFolderName.trim();
@@ -43,39 +48,99 @@ export default function useFolderManager() {
 
   const handleFileDrop = (e, folderId) => {
     e.preventDefault();
-    const draggedIndex = e.dataTransfer.getData('file-index');
+    e.stopPropagation();
 
-    if (draggedIndex !== '') {
+    const draggedIndex = e.dataTransfer.getData('file-index');
+    const sourceFolderId = e.dataTransfer.getData('source-folder-id');
+
+    // Dragging from root
+    if (draggedIndex !== '' && !sourceFolderId) {
       const fileToMove = rootFiles[draggedIndex];
-      setFolders(prev => updateFolderFiles(prev, folderId, [fileToMove]));
+      if (!fileToMove) return;
+
+      const updated = addFilesToFolder(folderId, [fileToMove]);
+      setFolders(updated);
       setRootFiles(prev => prev.filter((_, i) => i !== Number(draggedIndex)));
-    } else {
-      const droppedFiles = e.dataTransfer.files;
-      const fileArray = Array.from(droppedFiles).map(file => ({
-        name: file.name,
-        type: file.type,
-        size: (file.size / 1024).toFixed(2) + ' KB',
-      }));
-      setFolders(prev => updateFolderFiles(prev, folderId, fileArray));
+
+      if (activeFolder?.id === folderId) {
+        const updatedActive = findFolderById(updated, folderId);
+        setActiveFolder(updatedActive);
+      }
+
+      return;
+    }
+
+    // Dragging from another folder (not root)
+    if (draggedFile && sourceFolderId) {
+      const cleanedFolders = removeFileFromFolder(folders, sourceFolderId, draggedFile.name);
+      const updated = addFilesToFolder(cleanedFolders, folderId, [draggedFile]);
+
+      setFolders(updated);
+
+      if (activeFolder?.id === folderId) {
+        const updatedActive = findFolderById(updated, folderId);
+        setActiveFolder(updatedActive);
+      }
+
+      setDraggedFile(null);
+      return;
+    }
+
+    // Dropping system files (upload)
+    const droppedFiles = e.dataTransfer.files;
+    if (droppedFiles.length > 0) {
+      Array.from(droppedFiles).forEach(file => simulateUpload(file, folderId));
+
+
+      if (activeFolder?.id === folderId) {
+        const updatedActive = findFolderById(updated, folderId);
+        setActiveFolder(updatedActive);
+      }
     }
   };
 
-  const updateFolderFiles = (folderList, targetId, newFiles) => {
+  const removeFileFromFolder = (folderList, folderId, fileName) => {
+  return folderList.map(folder => {
+    if (folder.id === folderId) {
+      return {
+        ...folder,
+        files: folder.files.filter(file => file.name !== fileName),
+      };
+    } else if (folder.subfolders?.length) {
+      return {
+        ...folder,
+        subfolders: removeFileFromFolder(folder.subfolders, folderId, fileName),
+      };
+    }
+    return folder;
+  });
+};
+
+  const updateFolderFiles = (folderId, newFiles) => {
+    const updated = addFilesToFolder(folders, folderId, newFiles);
+    setFolders(updated);
+
+    // Sync activeFolder if it's the same folder
+    if (activeFolder?.id === folderId) {
+      const updatedActive = findFolderById(updated, folderId);
+      setActiveFolder(updatedActive);
+    }
+  };
+
+  const addFilesToFolder = (folderList, targetId, newFiles) => {
     return folderList.map(folder => {
       if (folder.id === targetId) {
+        return { ...folder, files: [...folder.files, ...newFiles] };
+      } else if (folder.subfolders?.length) {
         return {
           ...folder,
-          files: [...folder.files, ...newFiles],
-        };
-      } else if (folder.subfolders?.length > 0) {
-        return {
-          ...folder,
-          subfolders: updateFolderFiles(folder.subfolders, targetId, newFiles),
+          subfolders: addFilesToFolder(folder.subfolders, targetId, newFiles),
         };
       }
       return folder;
     });
-  };
+  }
+
 
   const handleDragOver = (e, folderId) => {
     e.preventDefault();
@@ -164,12 +229,43 @@ export default function useFolderManager() {
     });
   };
 
+  const simulateUpload = (file, folderId) => {
+  const uploadId = uuidv4();
+  const uploadItem = { id: uploadId, name: file.name, progress: 0 };
+  setUploadQueue(prev => [...prev, uploadItem]);
+
+  const interval = setInterval(() => {
+    setUploadQueue(prevQueue => {
+      return prevQueue.map(item => {
+        if (item.id === uploadId) {
+          const newProgress = Math.min(item.progress + Math.random() * 20, 100);
+          return { ...item, progress: newProgress };
+        }
+        return item;
+      });
+    });
+  }, 500);
+
+  setTimeout(() => {
+    clearInterval(interval);
+    setUploadQueue(prev => prev.filter(item => item.id !== uploadId));
+    updateFolderFiles(folderId, [{
+      name: file.name,
+      size: (file.size / 1024).toFixed(2) + ' KB',
+      type: file.type,
+    }]);
+  }, 3000 + Math.random() * 3000); 
+};
+
+
   return {
     folders, setFolders, newFolderName, setNewFolderName,
     editingId, setEditingId, editedName, setEditedName,
     activeFolder, handleSetActiveFolder, rootFiles, setRootFiles,
     dragOverId, setDragOverId, handleAddFolder, handleRename, handleDelete,
     handleFileDrop, handleDragOver, handleDragLeave, handleAddSubfolder,
-    enterFolder, goBack, draggedFolder, setDraggedFolder, handleFolderDrop
+    enterFolder, goBack, draggedFolder, setDraggedFolder, handleFolderDrop,
+    updateFolderFiles, draggedFile, setDraggedFile, folderStack,
+    uploadQueue,
   };
 }
