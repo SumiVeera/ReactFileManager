@@ -93,7 +93,8 @@ npm run dev
 ### Folder Hierarchy with Tree View
 
 <img width="1460" alt="image" src="https://github.com/user-attachments/assets/ddccdcb5-928a-4a93-a387-bef524303d58" />
-<img width="1458" alt="image" src="https://github.com/user-attachments/assets/57a71d65-3ded-4183-8981-f0e31060daa2" />
+<img width="1464" alt="image" src="https://github.com/user-attachments/assets/8dc6205f-43f8-4fc5-949a-e5b90eb59c0c" />
+
 
 ### Drag & Drop Support
 
