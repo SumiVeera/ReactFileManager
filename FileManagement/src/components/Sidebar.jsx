@@ -7,7 +7,7 @@ function Sidebar({
   handleRename, handleDelete, setActiveFolder, setRootFiles,
   handleAddSubfolder, handleSetActiveFolder,handleFolderDrop,
   handleFileDrop,handleDragOver,handleDragLeave,dragOverId,
-  setDraggedFolder,setDraggedFile,
+  setDraggedFolder,setDraggedFile,activeFolder
 }) {
   return (
     <div className="w-64 bg-gray-100 p-4 border-r">
@@ -71,6 +71,7 @@ function Sidebar({
             dragOverId={dragOverId}
             setDraggedFolder={setDraggedFolder}
             setDraggedFile={setDraggedFile}
+            activeFolder={activeFolder} 
           />
         ))}
       </ul>

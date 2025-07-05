@@ -18,6 +18,7 @@ function FolderItem({
   dragOverId,
   setDraggedFolder,
   setDraggedFile,
+  activeFolder,
 }) {
   const [expanded, setExpanded] = useState(true);
   const [isAddingSub, setIsAddingSub] = useState(false);
@@ -40,13 +41,10 @@ function FolderItem({
         const draggedIndex = e.dataTransfer.getData('file-index');
 
         if (systemFiles && systemFiles.length > 0) {
-          // ✅ Dropped files from OS
           handleFileDrop(e, folder.id);
         } else if (sourceFolderId || draggedIndex) {
-          // ✅ Internal file move (already works)
           handleFileDrop(e, folder.id);
         } else {
-          // ✅ Folder move
           handleFolderDrop(e, folder.id);
         }
 
@@ -61,7 +59,8 @@ function FolderItem({
       draggable
     >
       <div
-        className="flex items-center justify-between hover:bg-gray-200 px-2 py-1 rounded cursor-pointer"
+        className={`flex items-center justify-between px-2 py-1 rounded cursor-pointer"
+        ${activeFolder?.id === folder.id ? 'bg-blue-200' : 'hover:bg-gray-200'}`}
         onClick={() => handleSetActiveFolder(folder.id)}
       >
         <div className="flex items-center space-x-1">
@@ -197,6 +196,7 @@ function FolderItem({
               dragOverId={dragOverId}
               setDraggedFolder={setDraggedFolder}
               setDraggedFile={setDraggedFile}
+              activeFolder={activeFolder}
             />
           ))}
         </ul>
