@@ -5,8 +5,12 @@ A basic File Manager UI built with **React** and **Tailwind CSS**, similar to Go
 - ✅ Create folders
 - 📝 Rename and delete folders (with file existence confirmation)
 - 📂 Upload files to the root or specific folders
-- 🔄 Drag & drop files into folders
+- 🔄 Drag & drop multiple files into folders
 - 🧭 Navigate into folders to view their contents
+- 📂 Open folders by double-clicking in the main area.
+- 🔄 Switch between list view and grid view easily.
+- 🧭 See the full folder path at the top (breadcrumb).
+- ✅ The current folder is highlighted in the sidebar for easy navigation.
 
 ---
 
@@ -20,6 +24,12 @@ A basic File Manager UI built with **React** and **Tailwind CSS**, similar to Go
 - 🖱️ Full Drag & Drop Support
 - 💻 Upload Files from System
 - ⏳ Simulated Asynchronous Upload with Progress
+- Drag & Drop Upload — Multiple Files & Folders
+- OS-level Drag & Drop
+- Switch Between List & Grid Layouts
+- Folder/File Breadcrumb Path
+- Double-click to Open Folder
+- Active Folder Highlighted in Sidebar
 ---
 
 ## 🛠️ Tech Stack
@@ -104,6 +114,34 @@ npm run dev
 ### Upload Files from System
 
 <img width="1460" alt="image" src="https://github.com/user-attachments/assets/17079800-1102-4b6f-9e65-b17cdc60eb8d" />
+
+### Drag and Drop multiple files
+
+<img width="1458" alt="image" src="https://github.com/user-attachments/assets/ad8ca6f6-fff2-4adf-ab37-ed44425cf6d1" />
+
+### Switch Between List & Grid Layouts
+#### List View
+
+<img width="1450" alt="image" src="https://github.com/user-attachments/assets/854570bc-9809-4869-9ee3-935d1365d1cf" />
+
+#### Grid View
+
+<img width="1447" alt="image" src="https://github.com/user-attachments/assets/7c331b79-8d91-4207-a2f4-c6a92fad5dd0" />
+
+###Folder/File Breadcrumb Path
+
+<img width="1452" alt="image" src="https://github.com/user-attachments/assets/01d325b6-d61f-4e2d-baf5-90baf1ca4732" />
+
+###Active Folder Highlighted in Sidebar
+
+<img width="1453" alt="image" src="https://github.com/user-attachments/assets/d9820026-c736-4d0f-a8b4-e121b035dc2d" />
+
+
+
+
+
+
+
 
 
 
