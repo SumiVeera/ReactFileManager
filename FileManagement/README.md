@@ -11,6 +11,11 @@ A basic File Manager UI built with **React** and **Tailwind CSS**, similar to Go
 - 🔄 Switch between list view and grid view easily.
 - 🧭 See the full folder path at the top (breadcrumb).
 - ✅ The current folder is highlighted in the sidebar for easy navigation.
+- 🔍 Search and Filters
+- ⌨️ Keyboard Selection
+- 🔃 Sorting
+- 🖱️ Drag-and-Drop Enhancements
+- 📤 Upload Progress
 
 ---
 
@@ -48,7 +53,9 @@ src/
 │   ├── FolderItem.jsx         # Renders folder with subfolders recursively
 │   ├── FolderList.jsx         # Displays root folders in right panel
 │   ├── MainContent.jsx        # Main file and folder area with drop targets
-│   └── Sidebar.jsx            # Tree view with expandable folders
+│   └── Sidebar.jsx             # Tree view with expandable folders
+|   ├── SortDropdown.jsx
+|   ├── UploadProgress.jsx 
 ├── hooks/
 │   └── useFolderManager.js    # Handles all state and file/folder logic
 ├── App.jsx
