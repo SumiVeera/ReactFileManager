@@ -31,7 +31,8 @@ function FolderItem({
 
   return (
     <li
-      className={`mb-2 ${dragOverId === folder.id ? 'bg-blue-100' : ''}`}
+    className="mb-2"
+      //className={`mb-2 ${dragOverId === folder.id ? 'bg-blue-100' : ''}`}
       onDrop={(e) => {
         e.preventDefault();
         e.stopPropagation();
@@ -60,7 +61,8 @@ function FolderItem({
     >
       <div
         className={`flex items-center justify-between px-2 py-1 rounded cursor-pointer"
-        ${activeFolder?.id === folder.id ? 'bg-blue-200' : 'hover:bg-gray-200'}`}
+        ${activeFolder?.id === folder.id ? 'bg-blue-200' : 'hover:bg-gray-200'}
+        ${dragOverId === folder.id ? 'ring-2 ring-blue-400 bg-blue-50' : ''}`}
         onClick={() => handleSetActiveFolder(folder.id)}
       >
         <div className="flex items-center space-x-1">

@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
+
 export default function useFolderManager() {
   const [folders, setFolders] = useState([
     { id: '1', name: 'NDA', files: [], subfolders: [], parentId: null },
@@ -20,6 +21,22 @@ export default function useFolderManager() {
   const [draggedFile, setDraggedFile] = useState(null);
   const [uploadQueue, setUploadQueue] = useState([]);
   const [layout, setLayout] = useState('list');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filters, setFilters] = useState({
+    type: '',
+    date: '',
+    size: ''
+  });
+  const [selectedFiles, setSelectedFiles] = useState([]);
+  const [lastSelectedIndex, setLastSelectedIndex] = useState(null);
+  const [sortOption, setSortOption] = useState({ field: 'name', order: 'asc' });
+  const [uploadPanel, setUploadPanel] = useState({
+  isVisible: true,
+  isMinimized: false,
+  total: 0,
+  completed: 0,
+  files: []  
+});
 
 
   const handleAddFolder = () => {
@@ -88,13 +105,13 @@ export default function useFolderManager() {
 
     // Dropping system files (upload)
     const items = e.dataTransfer.items;
-
+    
     if (items && items.length > 0) {
       for (let i = 0; i < items.length; i++) {
         const entry = items[i].webkitGetAsEntry();
         if (entry) {
           if (entry.isFile) {
-            entry.file(file => simulateUpload(file, folderId));
+            entry.file(file => uploadFilesWithProgress([file], folderId));
           } else if (entry.isDirectory) {
             readDirectory(entry, folderId);
           }
@@ -273,6 +290,9 @@ export default function useFolderManager() {
     }, 3000 + Math.random() * 3000);
   };
 
+  
+
+
   const readDirectory = (directoryEntry, parentFolderId) => {
     const newFolderId = uuidv4();
     const newFolder = {
@@ -310,83 +330,275 @@ export default function useFolderManager() {
         }
       }
       return updated;
+    });
+
+
+    // Read the contents of this new folder
+    const reader = directoryEntry.createReader();
+    reader.readEntries((entries) => {
+      entries.forEach(entry => {
+        if (entry.isFile) {
+          entry.file(file => uploadFilesWithProgress([file], newFolderId));
+        } else if (entry.isDirectory) {
+          readDirectory(entry, newFolderId);
+        }
       });
+    });
+  };
 
+  const uploadFilesWithProgress = async (files, targetFolderId = null) => {
+  const filesArray = Array.from(files);
 
-      // Read the contents of this new folder
-      const reader = directoryEntry.createReader();
-      reader.readEntries((entries) => {
-        entries.forEach(entry => {
-          if (entry.isFile) {
-            entry.file(file => simulateUpload(file, newFolderId));
-          } else if (entry.isDirectory) {
-            readDirectory(entry, newFolderId); 
-          }
+  const fileStatuses = filesArray.map(file => ({
+    id: uuidv4(),
+    name: file.name,
+    progress: 0,
+    status: 'pending'
+  }));
+
+  // Show the upload panel
+  setUploadPanel({
+    isVisible: true,
+    isMinimized: false,
+    total: fileStatuses.length,
+    completed: 0,
+    files: fileStatuses
+  });
+
+  const uploads = fileStatuses.map((fileStatus, index) => {
+    const file = filesArray[index];
+
+    return new Promise(resolve => {
+      const newFile = {
+        id: fileStatus.id,
+        name: file.name,
+        size: (file.size / 1024).toFixed(2) + ' KB',
+        type: file.type,
+        createdAt: new Date(),
+        modifiedAt: new Date(),
+      };
+
+      let progress = 0;
+      const interval = setInterval(() => {
+        progress += 10;
+
+        setUploadPanel(prev => {
+          const updatedFiles = prev.files.map(f =>
+            f.id === fileStatus.id ? { ...f, progress: Math.min(progress, 100) } : f
+          );
+          return { ...prev, files: updatedFiles };
         });
-      });
-    };
 
+        if (progress >= 100) {
+          clearInterval(interval);
 
-    const uploadFilesWithProgress = (files, targetFolderId = null) => {
-      files.forEach((file, index) => {
-        const uploadId = `${file.name}-${Date.now()}-${index}`;
-        const newFile = {
-          id: uploadId,
-          name: file.name,
-          size: (file.size / 1024).toFixed(2) + ' KB',
-          type: file.type,
-          progress: 0,
-        };
-
-        setUploadQueue(prev => [...prev, newFile]);
-
-        const interval = setInterval(() => {
-          newFile.progress += 10;
-          setUploadQueue(prev => prev.map(f => f.id === uploadId ? { ...f, progress: newFile.progress } : f));
-
-          if (newFile.progress >= 100) {
-            clearInterval(interval);
-
+          try {
+            // File upload complete - update folder or root
             if (targetFolderId) {
-              // Update folder files
-              setFolders(prev => prev.map(folder =>
-                folder.id === targetFolderId
-                  ? { ...folder, files: [...folder.files, newFile] }
-                  : folder
-              ));
+              setFolders(prev => {
+                const updated = prev.map(folder =>
+                  folder.id === targetFolderId
+                    ? { ...folder, files: [...folder.files, newFile] }
+                    : folder
+                );
+
+                // Update active folder if needed
+                if (activeFolder?.id === targetFolderId) {
+                  const updatedActive = findFolderById(updated, targetFolderId);
+                  setActiveFolder(updatedActive);
+                }
+
+                return updated;
+              });
             } else {
-              // Update root files
               setRootFiles(prev => [...prev, newFile]);
             }
 
-            setUploadQueue(prev => prev.filter(f => f.id !== uploadId));
+            // Mark as success
+            setUploadPanel(prev => {
+              const updatedFiles = prev.files.map(f =>
+                f.id === fileStatus.id ? { ...f, status: 'success' } : f
+              );
+              return {
+                ...prev,
+                completed: prev.completed + 1,
+                files: updatedFiles,
+              };
+            });
+          } catch (error) {
+            console.error('Upload failed', error);
+            // Mark as error
+            setUploadPanel(prev => {
+              const updatedFiles = prev.files.map(f =>
+                f.id === fileStatus.id ? { ...f, status: 'error' } : f
+              );
+              return {
+                ...prev,
+                completed: prev.completed + 1,
+                files: updatedFiles,
+              };
+            });
           }
-        }, 200);
-      });
-    };
 
-    const getBreadcrumbPath = (folder, folders) => {
-      const path = [];
-      let current = folder;
+          resolve();
+        }
+      }, 200);
+    });
+  });
 
-      while (current) {
-        path.unshift(current);
-        current = current.parentId ? findFolderById(folders, current.parentId) : null;
+  await Promise.all(uploads);
+};
+
+
+  
+  const getBreadcrumbPath = (folder, folders) => {
+    const path = [];
+    let current = folder;
+
+    while (current) {
+      path.unshift(current);
+      current = current.parentId ? findFolderById(folders, current.parentId) : null;
+    }
+
+    return path;
+  };
+
+  const getFilteredFiles = () => {
+    const files = activeFolder ? activeFolder.files : rootFiles;
+
+    if (searchQuery && searchQuery.length < 3) {
+      return [];
+    }
+
+    // Step 1: Apply filters
+    let filteredFiles = files.filter(file => {
+      const matchesSearch = !searchQuery || file.name.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesFileType = !filters.fileType || file.type === filters.fileType;
+      return matchesSearch && matchesFileType;
+    });
+
+    // Step 2: Apply sorting
+    const { field, order } = sortOption || {};
+    const sortedFiles = [...filteredFiles];
+
+    sortedFiles.sort((a, b) => {
+      let valA, valB;
+
+      switch (field) {
+        case 'name':
+          valA = a.name.toLowerCase();
+          valB = b.name.toLowerCase();
+          break;
+        case 'dateModified':
+          valA = new Date(a.modifiedAt);
+          valB = new Date(b.modifiedAt);
+          break;
+        case 'dateCreated':
+          valA = new Date(a.createdAt);
+          valB = new Date(b.createdAt);
+          break;
+        case 'size':
+          valA = a.size;
+          valB = b.size;
+          break;
+        case 'type':
+          valA = a.type.toLowerCase();
+          valB = b.type.toLowerCase();
+          break;
+        default:
+          return 0;
       }
 
-      return path;
-    };
+      if (valA < valB) return order === 'asc' ? -1 : 1;
+      if (valA > valB) return order === 'asc' ? 1 : -1;
+      return 0;
+    });
 
-      return {
-      folders, setFolders, newFolderName, setNewFolderName,
-      editingId, setEditingId, editedName, setEditedName,
-      activeFolder, handleSetActiveFolder, rootFiles, setRootFiles,
-      dragOverId, setDragOverId, handleAddFolder, handleRename, handleDelete,
-      handleFileDrop, handleDragOver, handleDragLeave, handleAddSubfolder,
-      enterFolder, goBack, draggedFolder, setDraggedFolder, handleFolderDrop,
-      updateFolderFiles, draggedFile, setDraggedFile, folderStack,
-      uploadQueue, layout, setLayout, uploadFilesWithProgress,
-      getBreadcrumbPath,
-    };
+    return sortedFiles;
+  };
+
+  const updateSortOption = (newSort) => {
+    setSortOption(newSort);
+  };
+
+
+
+
+
+
+  const handleSearch = (query) => {
+    setSearchQuery(query.trim());
   }
+
+  const clearSearch = () => {
+    setSearchQuery('');
+  };
+
+  const updateFilters = (newFilters) => {
+    setFilters(newFilters);
+  };
+
+
+
+  const toggleFileSelection = (file) => {
+    setSelectedFiles(prev => {
+      const exists = prev.find(f => f.name === file.name);
+      return exists ? prev.filter(f => f.name !== file.name) : [...prev, file];
+    });
+  };
+
+  const clearSelection = () => setSelectedFiles([]);
+
+  const selectAllFiles = () => {
+    const files = activeFolder ? activeFolder.files : rootFiles;
+    setSelectedFiles(files);
+  };
+
+  const deleteSelectedFiles = () => {
+    let deletedCount = 0;
+
+    if (activeFolder) {
+      const newFiles = activeFolder.files.filter(file => {
+        const shouldDelete = selectedFiles.find(f => f.name === file.name);
+        if (shouldDelete) deletedCount++;
+        return !shouldDelete;
+      });
+
+      const updatedFolder = { ...activeFolder, files: newFiles };
+      setActiveFolder(updatedFolder);
+      setFolders(prev =>
+        prev.map(f => f.id === activeFolder.id ? updatedFolder : f)
+      );
+    } else {
+      const newRootFiles = rootFiles.filter(file => {
+        const shouldDelete = selectedFiles.find(f => f.name === file.name);
+        if (shouldDelete) deletedCount++;
+        return !shouldDelete;
+      });
+      setRootFiles(newRootFiles);
+    }
+
+    setSelectedFiles([]);
+    return deletedCount;
+  };
+
+  return {
+    folders, setFolders, newFolderName, setNewFolderName,
+    editingId, setEditingId, editedName, setEditedName,
+    activeFolder, handleSetActiveFolder, rootFiles, setRootFiles,
+    dragOverId, setDragOverId, handleAddFolder, handleRename, handleDelete,
+    handleFileDrop, handleDragOver, handleDragLeave, handleAddSubfolder,
+    enterFolder, goBack, draggedFolder, setDraggedFolder, handleFolderDrop,
+    updateFolderFiles, draggedFile, setDraggedFile, folderStack,
+    uploadQueue, layout, setLayout, uploadFilesWithProgress,
+    getBreadcrumbPath, searchQuery, clearSearch,
+    filters, updateFilters, getFilteredFiles, handleSearch,
+    selectedFiles, toggleFileSelection, clearSelection,
+    selectAllFiles, deleteSelectedFiles, lastSelectedIndex, setLastSelectedIndex,
+    setSelectedFiles, sortOption, updateSortOption,setSortOption,
+    uploadPanel,setUploadPanel,
+    
+
+  };
+}
 
